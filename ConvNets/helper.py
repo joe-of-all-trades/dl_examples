@@ -57,7 +57,7 @@ def display_stats(cifar10_dataset_folder_path, batch_id, sample_id):
     plt.imshow(sample_image)
 
 
-def _preprocess_and_save(normalize, one_hot_encode, features, labels, filename):
+def _preprocess_and_save(one_hot_encode, features, labels, filename):
     """
     Preprocess data and save it to file
     """
@@ -67,7 +67,7 @@ def _preprocess_and_save(normalize, one_hot_encode, features, labels, filename):
     pickle.dump((features, labels), open(filename, 'wb'))
 
 
-def preprocess_and_save_data(cifar10_dataset_folder_path, normalize, one_hot_encode):
+def preprocess_and_save_data(cifar10_dataset_folder_path, one_hot_encode):
     """
     Preprocess Training and Validation Data
     """
@@ -85,7 +85,6 @@ def preprocess_and_save_data(cifar10_dataset_folder_path, normalize, one_hot_enc
         
         # Prprocess and save a batch of training data
         _preprocess_and_save(
-            normalize,
             one_hot_encode,
             features[:-validation_count],
             labels[:-validation_count],
@@ -93,7 +92,6 @@ def preprocess_and_save_data(cifar10_dataset_folder_path, normalize, one_hot_enc
 
     # Preprocess and Save all validation data
     _preprocess_and_save(
-        normalize,
         one_hot_encode,
         np.array(valid_features),
         np.array(valid_labels),
@@ -108,7 +106,6 @@ def preprocess_and_save_data(cifar10_dataset_folder_path, normalize, one_hot_enc
 
     # Preprocess and Save all test data
     _preprocess_and_save(
-        normalize,
         one_hot_encode,
         np.array(test_features),
         np.array(test_labels),
