@@ -61,12 +61,6 @@ def _preprocess_and_save(normalize, one_hot_encode, features, labels, filename):
     """
     Preprocess data and save it to file
     """
-    #seq = iaa.Sequential([iaa.Fliplr(0.5), iaa.Sometimes(0.5, iaa.CropAndPad(px=(-2, 2)))])
-    
-    #features_c = seq.augment_images(features)
-    
-    #features_c = normalize(features_c)
-    #features = normalize(features)
     
     labels = one_hot_encode(labels)
 
@@ -85,22 +79,9 @@ def preprocess_and_save_data(cifar10_dataset_folder_path, normalize, one_hot_enc
         features, labels = load_cfar10_batch(cifar10_dataset_folder_path, batch_i)
         validation_count = int(len(features) * 0.1)
 
-        # features = normalize(features)
         # Use a portion of training batch for validation
         valid_features.extend(features[-validation_count:])
         valid_labels.extend(labels[-validation_count:])
-        
-        #seq = iaa.OneOf([iaa.Fliplr(1), 
-        #                 iaa.CropAndPad(px=(-2, 2)), 
-        #                 iaa.Affine(scale={"x": (0.8, 1.2), "y": (0.8, 1.2)},
-        #                            translate_percent={"x": (-0.2, 0.2), "y": (-0.2, 0.2)},
-        #                            rotate=(-25, 25),
-        #                            shear=(-8, 8))])
-        #features_c = seq.augment_images(features)
-        #features_c = normalize(features_c)
-        #features = np.concatenate((features, features_c), axis=0)
-        #labels = np.concatenate((labels,labels), axis=0)
-
         
         # Prprocess and save a batch of training data
         _preprocess_and_save(
@@ -149,7 +130,11 @@ def load_preprocess_training_batch(batch_id, batch_size):
     """
     filename = 'preprocess_batch_' + str(batch_id) + '.p'
     features, labels = pickle.load(open(filename, mode='rb'))
-
+    
+    index = np.array(range(features.shape[0]))
+    np.random.shuffle(index)
+    features = features[index]
+    labels = labels[index]
     # Return the training data in batches of size <batch_size> or less
     return batch_features_labels(features, labels, batch_size)
 
