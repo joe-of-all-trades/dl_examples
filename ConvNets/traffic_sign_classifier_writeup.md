@@ -3,12 +3,12 @@
 
 [//]: # (Image References)
 
-[image1]: ./dataset_exploration.png "Exploration"
-[image2]: ./class_distribution.png "Distribution"
-[image3]: ./normalization.png "Normalization"
-[image4]: ./augmentation.png "Augmentation"
-[image5]: ./download.png "New Images"
-[image6]: ./visualization.png "Visualization"
+[image1]: ./traffic_sign_classifier_files/dataset_exploration.png "Exploration"
+[image2]: ./traffic_sign_classifier_files/class_distribution.png "Distribution"
+[image3]: ./traffic_sign_classifier_files/normalization.png "Normalization"
+[image4]: ./traffic_sign_classifier_files/augmentation.png "Augmentation"
+[image5]: ./traffic_sign_classifier_files/download.png "New Images"
+[image6]: ./traffic_sign_classifier_files/visualization.png "Visualization"
 
 ---
 
