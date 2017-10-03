@@ -2,7 +2,7 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelBinarizer
-
+from imgaug import augmenters as iaa
 
 def _load_label_names():
     """
@@ -57,17 +57,17 @@ def display_stats(cifar10_dataset_folder_path, batch_id, sample_id):
     plt.imshow(sample_image)
 
 
-def _preprocess_and_save(normalize, one_hot_encode, features, labels, filename):
+def _preprocess_and_save(one_hot_encode, features, labels, filename):
     """
     Preprocess data and save it to file
     """
-    features = normalize(features)
+    
     labels = one_hot_encode(labels)
 
     pickle.dump((features, labels), open(filename, 'wb'))
 
 
-def preprocess_and_save_data(cifar10_dataset_folder_path, normalize, one_hot_encode):
+def preprocess_and_save_data(cifar10_dataset_folder_path, one_hot_encode):
     """
     Preprocess Training and Validation Data
     """
@@ -79,21 +79,19 @@ def preprocess_and_save_data(cifar10_dataset_folder_path, normalize, one_hot_enc
         features, labels = load_cfar10_batch(cifar10_dataset_folder_path, batch_i)
         validation_count = int(len(features) * 0.1)
 
+        # Use a portion of training batch for validation
+        valid_features.extend(features[-validation_count:])
+        valid_labels.extend(labels[-validation_count:])
+        
         # Prprocess and save a batch of training data
         _preprocess_and_save(
-            normalize,
             one_hot_encode,
             features[:-validation_count],
             labels[:-validation_count],
             'preprocess_batch_' + str(batch_i) + '.p')
 
-        # Use a portion of training batch for validation
-        valid_features.extend(features[-validation_count:])
-        valid_labels.extend(labels[-validation_count:])
-
     # Preprocess and Save all validation data
     _preprocess_and_save(
-        normalize,
         one_hot_encode,
         np.array(valid_features),
         np.array(valid_labels),
@@ -108,7 +106,6 @@ def preprocess_and_save_data(cifar10_dataset_folder_path, normalize, one_hot_enc
 
     # Preprocess and Save all test data
     _preprocess_and_save(
-        normalize,
         one_hot_encode,
         np.array(test_features),
         np.array(test_labels),
@@ -130,7 +127,11 @@ def load_preprocess_training_batch(batch_id, batch_size):
     """
     filename = 'preprocess_batch_' + str(batch_id) + '.p'
     features, labels = pickle.load(open(filename, mode='rb'))
-
+    
+    index = np.array(range(features.shape[0]))
+    np.random.shuffle(index)
+    features = features[index]
+    labels = labels[index]
     # Return the training data in batches of size <batch_size> or less
     return batch_features_labels(features, labels, batch_size)
 
